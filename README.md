@@ -22,3 +22,5 @@ Expand file_wrapper into package.
 Have vector store use package.
 
 Finding it necessary to simplify langchain deps.
+
+Incorporate with AgentOllama, as well Modular_DB and hopefully get the wheel spinning, so to speak.
