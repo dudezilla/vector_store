@@ -25,7 +25,7 @@ from load_envs import load_env
 
 
 load_env()
-BASE_URL = "172.17.0.1:11434"
+BASE_URL = "127.0.0.1:11434"
 EMBEDDING_MODEL = "nomic-embed-text-v1.5"
 #underlying_embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 underlying_embeddings = NomicEmbeddings(
@@ -89,7 +89,8 @@ available_functions = {
 }
 
 def get_model():
-    llm = ChatOllama( model="llama3.1", temperature=0, base_url=BASE_URL)
+#    llm = ChatOllama( model="llama3.1", temperature=0, base_url=BASE_URL)
+    llm = ChatOllama( model="llama3.1", temperature=0,)
     return llm
 
 llm = get_model()

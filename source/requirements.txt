@@ -3,4 +3,3 @@ langchain-ollama
 langchain_community
 langchain
 faiss-cpu
-dotenv
