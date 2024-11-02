@@ -26,8 +26,6 @@ class File_Collection:
         else:
             self.unique[chksum] = [file_wrapper]
 
-
-
     def unique_contents(self):
         unique_files = self.unique
         result = {}
@@ -37,7 +35,6 @@ class File_Collection:
                 sub.append(v.name_with_path())
             result[key]={'paths':sub}
         return result
-
 
     def next_file(self):
         #for file in sorted(self.files.values(), key=lambda x: x._timestamp):
