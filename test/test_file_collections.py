@@ -52,17 +52,24 @@ class Test_File_Collection(unittest.TestCase):
         self.assertEqual(self.collection[self.file1_path], self.file1)
         self.assertEqual(self.collection[self.file2_path], self.file2)
 
+    # def test_unique_contents(self):
+    #     unique_files = self.collection.unique_contents()
+    #     # self.assertEqual(len(unique_files), 2)
+    #     # self.assertIn(self.file1, unique_files)
+    #     # self.assertIn(self.file2, unique_files)
+    #     print(unique_files)
+    #     # result = {"b10a8db164e0754105b7a99be72e3fe5": {"paths": ["/tmp/tmpl2nn7c47/file1.txt"]}, "a709c173220d6185d12248faa9f40ac8": {"paths": ["/tmp/tmpl2nn7c47/file2.txt", "/tmp/tmpl2nn7c47/file3.txt", "/tmp/tmpl2nn7c47/file4.txt"]}}
+    #     #RANDOM PATHS... Can I fix them?
+    #     # print(unique_files)
+    #     # print(result)
+    #     #self.assertEquals(unique_files,result)
     def test_unique_contents(self):
         unique_files = self.collection.unique_contents()
-        # self.assertEqual(len(unique_files), 2)
-        # self.assertIn(self.file1, unique_files)
-        # self.assertIn(self.file2, unique_files)
-        result = {"b10a8db164e0754105b7a99be72e3fe5": {"paths": ["/tmp/tmpl2nn7c47/file1.txt"]}, "a709c173220d6185d12248faa9f40ac8": {"paths": ["/tmp/tmpl2nn7c47/file2.txt", "/tmp/tmpl2nn7c47/file3.txt", "/tmp/tmpl2nn7c47/file4.txt"]}}
-        #RANDOM PATHS... Can I fix them?
-        # print(unique_files)
-        # print(result)
-        self.assertEquals(unique_files,result)
-
+        expected_result = {
+            "b10a8db164e0754105b7a99be72e3fe5": {"paths": [self.file1_path]},
+            "a709c173220d6185d12248faa9f40ac8": {"paths": [self.file2_path, self.file3_path, self.file4_path]}
+        }
+        self.assertEqual(unique_files, expected_result)
         
 
     def test_next_file(self):

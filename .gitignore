@@ -1,3 +1,7 @@
+trash/
+test/fake/
+test/test_result.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

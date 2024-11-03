@@ -1,32 +1,28 @@
-#!/usr/bin/env python
-# coding: utf-8
-#  https://python.langchain.com/docs/how_to/caching_embeddings/
 from langsmith import traceable
-# from langchain_ollama import ChatOllama
-# from langchain_core.tools import tool
+
 from langchain.storage import LocalFileStore
 from langchain_community.document_loaders import TextLoader
-#from langchain_community.document_loaders import DirectoryLoader
+
 from langchain_community.vectorstores import FAISS
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain_nomic import NomicEmbeddings
-from langchain.tools.retriever import create_retriever_tool
 from langchain_text_splitters import CharacterTextSplitter
-#from typing import List
-#from langchain_ollama import ChatOllama
-import json
-#we get the dotenv dependencey from somewhere!
-from load_envs import load_env
-import os
-from langchain_chroma import Chroma
 
+import json
+
+import os
+
+def load_config():
+    with open("config.json","r") as f:
+        str = f.read()
+    CONFIG = json.loads(str)
+    return CONFIG
 
 
 def init():
-    load_env()
-    result = {}
-    result['BASE_URL'] = "127.0.0.1:11434"
-    result['EMBEDDING_MODEL'] = "nomic-embed-text-v1.5"
+    result = load_config()
+    #result['BASE_URL'] = "127.0.0.1:11434"
+    #result['EMBEDDING_MODEL'] = "nomic-embed-text-v1.5"
     result['UNDERLYING_EMBEDDINGS'] = NomicEmbeddings(
         model=result['EMBEDDING_MODEL'],
         # dimensionality=256,
@@ -43,19 +39,18 @@ def init():
         # the docstring for `GPT4All.__init__` for more info. Typically
         # defaults to CPU. Do not use on macOS.
     )
-
-    result['STORE'] = LocalFileStore("./cache/")
+    #result['STORE_LOCATION'] = "./cache/"
+    result['STORE'] = LocalFileStore(result['STORE_LOCATION'])
     result['CACHED_EMBEDDER'] = CacheBackedEmbeddings.from_bytes_store(
         result['UNDERLYING_EMBEDDINGS'], result['STORE'], namespace=result['EMBEDDING_MODEL']
     )
-    result['SOURCE_FOLDER'] = "input"
+    #result['SOURCE_FOLDER'] = "input"
     result['RAW_DOCUMENTS'] = load_all(result['SOURCE_FOLDER'])
     result['TEXT_SPLITTER'] = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     result['RAW_DOCUMENTS'] = result['TEXT_SPLITTER'].split_documents(result['RAW_DOCUMENTS'])
     result['DB'] = FAISS.from_documents(result['RAW_DOCUMENTS'], result['CACHED_EMBEDDER'])
     result['RETRIEVER'] = result['DB'].as_retriever()
-    #result['VECTOR_STORE_PATH'] = "./chroma_db",
-    #result['VECTOR_STORE'] = Chroma( collection_name="example_collection", embedding_function=result['UNDERLYING_EMBEDDINGS'], persist_directory="./chroma_langchain_db", )
+    result['DB'].save_local(result['DB_INDEX_LOCATION'])
     return result
 
 
@@ -89,4 +84,3 @@ def similarity_search(question,db, n):
 
 CONFIG = init()
 
-print(similarity_search("Gwen Stills",CONFIG['DB'],2))

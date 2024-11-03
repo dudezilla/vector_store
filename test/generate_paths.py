@@ -13,8 +13,6 @@ def make_directory(words, parent='./fake'):
     os.makedirs(dir_name, exist_ok=True)
     file1_word = word_path
     write_words(word_path,words,dir_name)
-
-
     add_more_files(words,dir_name, 3)
     make_directory(words,dir_name)
 

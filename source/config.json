@@ -1,0 +1,7 @@
+{
+    "BASE_URL": "127.0.0.1:11434",
+    "EMBEDDING_MODEL": "nomic-embed-text-v1.5",
+    "STORE_LOCATION":  "./cache/",
+    "SOURCE_FOLDER": "input",
+    "DB_INDEX_LOCATION": "faiss_index"
+}
