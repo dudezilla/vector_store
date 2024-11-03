@@ -1,14 +1,20 @@
 from langsmith import traceable
 
+import faiss
 from langchain.storage import LocalFileStore
 from langchain_community.document_loaders import TextLoader
 
 from langchain_community.vectorstores import FAISS
-from langchain.embeddings import CacheBackedEmbeddings
+#from langchain.embeddings import CacheBackedEmbeddings
+from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_nomic import NomicEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 
 import json
+#from crawl import crawl
+from file_wrapper import File_Wrapper
+from file_collection import File_Collection
+from langchain_core.documents import Document
 
 import os
 
@@ -41,23 +47,40 @@ def init():
     )
     #result['STORE_LOCATION'] = "./cache/"
     result['STORE'] = LocalFileStore(result['STORE_LOCATION'])
-    result['CACHED_EMBEDDER'] = CacheBackedEmbeddings.from_bytes_store(
-        result['UNDERLYING_EMBEDDINGS'], result['STORE'], namespace=result['EMBEDDING_MODEL']
-    )
+    #result['CACHED_EMBEDDER'] = CacheBackedEmbeddings.from_bytes_store(
+    #    result['UNDERLYING_EMBEDDINGS'], result['STORE'], namespace=result['EMBEDDING_MODEL']
+    #)
+    #not splitting the documents.
+    #result['TEXT_SPLITTER'] = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     #result['SOURCE_FOLDER'] = "input"
-    result['RAW_DOCUMENTS'] = load_all(result['SOURCE_FOLDER'])
-    result['TEXT_SPLITTER'] = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    result['RAW_DOCUMENTS'] = result['TEXT_SPLITTER'].split_documents(result['RAW_DOCUMENTS'])
-    result['DB'] = FAISS.from_documents(result['RAW_DOCUMENTS'], result['CACHED_EMBEDDER'])
-    result['RETRIEVER'] = result['DB'].as_retriever()
+    #result['RAW_DOCUMENTS'] = result['TEXT_SPLITTER'].split_documents(result['RAW_DOCUMENTS'])
+    #result['DB'] = FAISS.from_documents(result['RAW_DOCUMENTS'], result['CACHED_EMBEDDER'])
+
+    index = faiss.IndexFlatL2(len(result['UNDERLYING_EMBEDDINGS'].embed_query("hello world")))
+
+    result['DB'] = FAISS(
+        embedding_function=result['UNDERLYING_EMBEDDINGS'],
+        index=index,
+        docstore=InMemoryDocstore(),
+        index_to_docstore_id={}
+    )
+
+    
+    result['RAW_DOCUMENTS'] = load_all("./input_metadata.json",result['DB'])
+    #result['RETRIEVER'] = result['DB'].as_retriever()
     result['DB'].save_local(result['DB_INDEX_LOCATION'])
     return result
 
 
-def load_all(folder):
-    path = os.path.join(folder,"story.txt")
-    raw_documents = TextLoader(path).load()
-    return raw_documents
+def load_all(file_index,vector_store):
+    data = File_Collection.deserialize(file_index)
+    receipts = []
+    for key,list in data.unique_contents().items():
+        top =  list['paths'][0] #First path all the documents in list['paths'] are the same.
+        with open(top,"r") as f:
+            new_docs = [Document(page_content=f.read(), metadata=list, id=key)]
+            receipts += vector_store.add_documents(documents=new_docs)
+    return receipts
 
 
 

@@ -19,6 +19,9 @@ def crawl(dir:str):
             #print(f"Adding: path={path} file={file_name}")
             #print(str(file_collection))
             #print(file_collection.unique_contents())
-            serialized = file_collection.serialize("test_result.json")
+            serialized = file_collection.serialize("input_metadata.json")
+    return file_collection
 
-#crawl("./fake")
+
+
+

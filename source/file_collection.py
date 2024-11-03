@@ -25,6 +25,7 @@ class File_Collection:
         self.files = {}
         self.unique = {}
 
+
     def __getitem__(self, key):
         """Return the File_Wrapper instance associated with the given key."""
         return self.files[key]
@@ -88,6 +89,20 @@ class File_Collection:
         for file in sorted(self.files.values(), key=lambda x: x._timestamp, reverse=True):
             yield file
 
+
+    def __iter__(self):
+        # Initialize the iterator with the sorted files
+        self._iterator = iter(sorted(self.files.values(), key=lambda x: x._timestamp, reverse=True))
+        return self
+
+    def __next__(self):
+        # Attempt to get the next item from the iterator
+        try:
+            return next(self._iterator)
+        except StopIteration:
+            # If there are no more elements, raise StopIteration
+            raise StopIteration
+
     def __str__(self):
         """
         Return a string representation of the collection where duplicates are grouped by hashes.
@@ -130,3 +145,17 @@ class File_Collection:
         with open(file_path, 'r') as f:
             data = json.load(f)
             return cls.from_dict(data)
+        
+
+    def __eq__(self, other):
+        if not isinstance(other, File_Collection):
+            return False
+        return self._dicts_equal(self.files, other.files) and self._dicts_equal(self.unique, other.unique)
+
+    def _dicts_equal(self, d1, d2):
+        if d1.keys() != d2.keys():
+            return False
+        for key in d1:
+            if d1[key] != d2[key]:
+                return False
+        return True

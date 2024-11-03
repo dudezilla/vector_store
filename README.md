@@ -1,26 +1,83 @@
-# vector_store
-vector_store FAIS
+# Vector Store
 
-This public repository tracks that status of building a vector file store.
-The proof of concept is contained in the notebook files.
+This repository is a vector store based on FAISS using the `nomic-embed-text-v1.5` model. The project's status is "early in development," so expect changes and potential improvements over time.
 
-Building the module, unit_tests
+## Overview
 
-Note to self, where did I leave off... 
-File and metadata will be entered into the database to experiment with LLM and machine coding. 
+This project enables k-NN similarity search on vector encodings stored in FAISS. It's currently a work in progress for a Retrieval-Augmented Generation (RAG) Project.
 
-Goals -
-Uniform vector store.
-Somewhat functional rag with some decent tools for autocoding with LLM.
+## Requirements
 
+Before you get started, you will need a Nomic API key. Make sure to have it ready before proceeding with the steps below. Ensure the key is available through the path:
 
+## Usage
 
-The file_collection and file_wrapper objects can also be used to analyze the disk images from the various RPI projects.
-Metadata, and filesystem attributes will be important aspects.
+1. **Clone the Project**
 
-Expand file_wrapper into package.
-Have vector store use package.
+   Start by cloning the repository:
+   ```bash
+   git clone <repository-url>
+   ```
 
-Finding it necessary to simplify langchain deps.
+2. **Navigate to the Source Directory**
 
-Incorporate with AgentOllama, as well Modular_DB and hopefully get the wheel spinning, so to speak.
+   Use the following command to navigate to the project's source directory:
+   ```bash
+   cd <source-directory>
+   ```
+
+   Running `ls` (or `dir` on Windows) should show you `build_index.py` and `cached_faiss.py`.
+
+3. **Set Up the Input Directory**
+
+   If an input directory doesn't exist, create one using:
+   ```bash
+   mkdir input
+
+   And put a text based document inside of it. Or "copy *.py to ./input"
+   to embed the source code.
+   ```
+
+4. **Build the Index**
+
+   Run the following command to build the FAISS index:
+   ```bash
+   python build_index.py
+   ```
+
+5. **Cache FAISS**
+
+   Once the index is built, cache it using:
+   ```bash
+   python cached_faiss.py
+   ```
+
+6. **Edit the Search Query**
+
+   Manually edit the search string in `load_store.py`. As of now, it can be found on line 72, although this might change frequently as the project develops:
+
+   ```python
+   result = similarity_search("What is faiss?", CONFIG['DB'], 3)
+   ```
+
+7. **Perform a Search**
+
+   Finally, execute the following command to perform a search against the indexed FAISS vector store using the predefined query:
+   ```bash
+   python load_store.py
+   ```
+
+   This will search the vector store with the hardcoded "What is faiss?" query.
+
+## Notes
+
+- This README is primarily for personal use but feedback and contributions are always welcome.
+- Ensure that your directory structure and scripts are correctly set up as this project is still evolving, expect potential changes in the workflow.
+
+## Contributing
+
+Since this is a personal project primarily for self-use, contributions aren't actively sought. However, if you're interested in collaborating, feel free to fork the repo and open a pull request.
+
+---
+
+*This repository is still in its early stages, so expect iterative improvements and potential restructuring.*

@@ -238,7 +238,7 @@ class File_Wrapper:
         return str(self.file_name)
 
     def __eq__(self, other):
-        if not isinstance(other, FileWrapper):
+        if not isinstance(other, File_Wrapper):
             return NotImplemented
         return self.checksum == other.checksum
 
