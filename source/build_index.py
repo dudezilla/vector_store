@@ -8,22 +8,22 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'source'))
 from crawl import crawl
 
 
-c1 = File_Collection.deserialize("input_metadata.json")
+INPUT_LOCATION = "./input"
+META_LOCATION = "input_metadata.json"
 
-file_test = crawl("./input")
-# for wrapper in c1:
-#     print(str(wrapper))
-#     print(wrapper.to_dict())
-#     pass
+def check_differences(c1):
+   file_test = crawl(INPUT_LOCATION)
+   if file_test == c1:
+      print("File metadata is current.")
+   else:
+      print("Database updates are possible.")
 
-# for key,list in c1.unique_contents().items():
-#     print(f"md5:{key}")
-#     for file in list['paths']:
-#         print(file)
-#c1.serialize("input_metadata.json")
+c1 = None
+try:
+   c1 = File_Collection.deserialize(META_LOCATION)
+   check_differences(c1)
+except FileNotFoundError as F:
+   crawl(INPUT_LOCATION)
 
-if file_test == c1:
-   print("File metadata is current.")
-else:
-   print("Database updates are possible.")
-   
+
+

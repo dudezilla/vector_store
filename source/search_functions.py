@@ -7,7 +7,6 @@ from load_store import get_db, get_retriever, get_index_manifest, vectorize
 
 document_cache = get_index_manifest()
 
-
 def similarity_search(question,db, n):
     """
     similarity_search 
@@ -29,33 +28,30 @@ def similarity_search(question,db, n):
     docs_formatted = list(map(lambda doc: f"meta: {doc.metadata}\n Content: {doc.page_content}", similar_docs))
     return docs_formatted
 
-#NotImplementedError: FAISS does not yet support get_by_ids
-def get_by_id(id, db):
-    return db.get_by_ids([id])[0]
+##This feature will need to embed metadata
+# #NotImplementedError: FAISS does not yet support get_by_ids
+# def get_by_id(id, db):
+#     return db.get_by_ids([id])[0]
 
 
 
-def lookup_el(hash, file_locatioins):
-    print(f"hash: {hash} references {len(file_locatioins)} paths on disk.")
-    for file in file_locatioins:
-        #print(type(file))
-        #print(file)
-        #wrapper = document_cache.__getitem__(file)
-        #print(file.to_dict())
-        get_by_id(file.checksum, get_db())
+# def lookup_el(hash, file_locatioins):
+#     print(f"hash: {hash} references {len(file_locatioins)} paths on disk.")
+#     for file in file_locatioins:
+#         #print(type(file))
+#         #print(file)
+#         #wrapper = document_cache.__getitem__(file)
+#         #print(file.to_dict())
+#         get_by_id(file.checksum, get_db())
 
-#document_cache.visit_unique_keys(lookup_el)
+# #document_cache.visit_unique_keys(lookup_el)
 
 def score_result(stra,strb,score):
-
     result = "NOT THE SAME"
-
+    #print(f"stra: {stra}, strb: {strb}")
     if stra == strb:
-        print("SAME")
-    
-    print(f"RESULT: {result} SCORE is{score}")
-
-
+        result = "SAME"
+    print(f"RESULT: {result} SCORE is: {score}")
 
 
 def scored_search(q,k,db, callback):
@@ -67,17 +63,26 @@ def scored_search(q,k,db, callback):
     return result
 
 
-def search(q, cb):
-    return scored_search(q, document_cache.len_files(), get_db(),cb)
+def search(q, callback):
+    return scored_search(q, document_cache.len_files(), get_db(),callback)
 
 def drive_search(q):
-    result = search(q,score_result)
-    for el in result:
-        doc, score = el
-        print(f"SCORE IS: [{score}]")
-        doc2 = str(doc)
-        #print(doc2)
-        search(str(doc),score_result)
+    #result = search(q,score_result)
+    for el in originals:
+        search(el,score_result)
 
 
+def load_originals(document_collection):
+    receipts = []
+    #visit unique and load...
+    for key,list in document_collection.unique_contents().items():
+        top =  list['paths'][0] #First path all the documents in list['paths'] are the same.
+        with open(top,"r") as f:
+            receipts.append(f.read())
+    return receipts
+
+originals = load_originals(document_cache)
 drive_search("FAISS")
+
+
+

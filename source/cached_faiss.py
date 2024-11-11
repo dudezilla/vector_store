@@ -7,7 +7,7 @@ from langchain_community.vectorstores import FAISS
 #from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_nomic import NomicEmbeddings
-f#rom langchain_text_splitters import CharacterTextSplitter
+#from langchain_text_splitters import CharacterTextSplitter
 
 import json
 #from crawl import crawl
