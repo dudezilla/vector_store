@@ -159,3 +159,19 @@ class File_Collection:
             if d1[key] != d2[key]:
                 return False
         return True
+    
+    def visit_unique_keys(self, callback):
+        """
+        Visit each unique key in the unique dictionary and perform a callback.
+
+        Args:
+            callback (function): A function that takes a key and the associated list of File_Wrapper instances.
+        """
+        for hash, file_locations in self.unique.items():
+            callback(hash,file_locations)
+
+    def len_unique(self):
+        return len(self.unique)
+    
+    def len_files(self):
+        return len(self.files)

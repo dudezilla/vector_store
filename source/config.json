@@ -3,5 +3,6 @@
     "EMBEDDING_MODEL": "nomic-embed-text-v1.5",
     "STORE_LOCATION":  "./cache/",
     "SOURCE_FOLDER": "input",
-    "DB_INDEX_LOCATION": "faiss_index"
+    "DB_INDEX_LOCATION": "faiss_index",
+    "METADATA_MANIFEST":"./input_metadata.json"
 }

@@ -1,14 +1,13 @@
-from langsmith import traceable
-
+#from langsmith import traceable
 import faiss
 from langchain.storage import LocalFileStore
-from langchain_community.document_loaders import TextLoader
+#from langchain_community.document_loaders import TextLoader
 
 from langchain_community.vectorstores import FAISS
 #from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_nomic import NomicEmbeddings
-from langchain_text_splitters import CharacterTextSplitter
+f#rom langchain_text_splitters import CharacterTextSplitter
 
 import json
 #from crawl import crawl
@@ -54,19 +53,17 @@ def init():
     #result['TEXT_SPLITTER'] = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     #result['SOURCE_FOLDER'] = "input"
     #result['RAW_DOCUMENTS'] = result['TEXT_SPLITTER'].split_documents(result['RAW_DOCUMENTS'])
-    #result['DB'] = FAISS.from_documents(result['RAW_DOCUMENTS'], result['CACHED_EMBEDDER'])
-
+    #result['DB'] = FAISS.from_documents(result['RAW_DOCUMENTS'], result['CACHED_EMBEDDER'])0
+    
+    #I HAVE NO IDEA OF WHAT THIS LINE DOES! "I think it populates something that needs to exists similar to : x={}"
     index = faiss.IndexFlatL2(len(result['UNDERLYING_EMBEDDINGS'].embed_query("hello world")))
-
     result['DB'] = FAISS(
         embedding_function=result['UNDERLYING_EMBEDDINGS'],
         index=index,
         docstore=InMemoryDocstore(),
         index_to_docstore_id={}
     )
-
-    
-    result['RAW_DOCUMENTS'] = load_all("./input_metadata.json",result['DB'])
+    result['RAW_DOCUMENTS'] = load_all(result['METADATA_MANIFEST'],result['DB'])
     #result['RETRIEVER'] = result['DB'].as_retriever()
     result['DB'].save_local(result['DB_INDEX_LOCATION'])
     return result
@@ -81,29 +78,6 @@ def load_all(file_index,vector_store):
             new_docs = [Document(page_content=f.read(), metadata=list, id=key)]
             receipts += vector_store.add_documents(documents=new_docs)
     return receipts
-
-
-
-
-def similarity_search(question,db, n):
-    """
-    similarity_search 
-
-    Example call:
-
-    similarity_search("Who is Gwen Stills?", chrome_db, 3)
-    Args:
-        question (str): The question the user asked that might be answerable from the searchable documents
-        db (FAIS): FAIS object/Database
-        b (int): value k for similarity search. 
-    Returns:
-        str: The list of texts (and their sources) that matched with the question the closest using RAG
-    """
-    
-    similar_docs = db.similarity_search(question, k=n)
-    docs_formatted = list(map(lambda doc: f"Source: {doc.metadata.get('source', 'NA')}\nContent: {doc.page_content}", similar_docs))
-    return str(docs_formatted)
-
 
 CONFIG = init()
 
